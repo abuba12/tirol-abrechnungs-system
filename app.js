@@ -20,6 +20,9 @@ app.use(express.urlencoded({ extended: true }))
 
 app.use(require('express-fileupload')())
 
+app.set('views', './views')
+app.set('view engine', 'pug');
+
 const pool = require('mysql').createPool({
     connectionLimit: 5,
     socketPath: process.env.DB_SOCK_PATH,
@@ -60,28 +63,6 @@ const leiterAbrufen = () => {
 
 leiterAbrufen()
 
-/*
-app.get('/rechnung',(req,res)=>{
-    pool.query({
-        sql: "SELECT posten,betrag,leiter,kasse FROM rechnungen;"
-    },(err,sqlResponse,fields)=>{
-        if(err)
-        {
-            console.error(err)
-            res.sendStatus(500)
-        }
-        else
-        {
-            res.status(200)
-            sqlResponse.forEach(rechnung => {
-                res.write( `${rechnung.posten} ${rechnung.betrag} ${rechnung.leiter} ${rechnung.kasse}\n` )
-            })
-            res.end()
-        }
-    })
-})
-*/
-
 app.post('/rechnung',(req,res)=>{
     pool.query({
         sql: "INSERT INTO rechnungen (posten,betrag,leiter,kasse,bezahlt,bild) VALUES (?,?,?,?,?,BINARY(?));",
@@ -113,7 +94,6 @@ app.post('/bildRechnung',(req,res)=>{
         res.sendStatus(400)
         return
     }
-    res.write("<html><head><meta charset='UTF-8'><style>p{background-color:lightgreen;} .error{color:black;background-color:red;}</style></head><body><a href='/'><h1>TAS - Bild Rechnung</h1></a><a href='/bildRechnung.html'>Neue Bildrechnung</a>")
     var leiterRegEx = "("
     leiter.forEach((name,index,array)=>{
         leiterRegEx+=name.toLowerCase()
@@ -124,18 +104,18 @@ app.post('/bildRechnung',(req,res)=>{
     const regex = "(?<leiter>"+leiterRegEx+")-(?<posten>[a-z]+)-(?<kasse>(le[a-z]*|la[a-z]*|t[a-z]*))-(?<euro>\\d+)_(?<cents>\\d{2})(?<bezahlt>(-b){1}[a-z]*)?"
     const images = Array.isArray(req.files.bild) ? req.files.bild : [req.files.bild]
     var processed = 0
+    const zeilen = []
     images.forEach( image=>{
         const matches = image.name.toLowerCase().split(".")[0].match(regex)
         if(!matches)
         {
-            res.write(`<p class="error">Format Fehler bei ${image.name}</p>\n`)
+            zeilen.push({klasse: "error",text: `Format Fehler bei ${image.name}`})
             processed++
             if(processed==images.length)
             {
-                res.write("</body></html>")
-                res.end()
+                res.render('bildRechnung',{zeilen: zeilen})
+                return
             }
-            return
         }
         const betrag = parseInt(matches.groups.euro)*100 + parseInt(matches.groups.cents)
         var kasse = "Lagerkosten"
@@ -156,17 +136,17 @@ app.post('/bildRechnung',(req,res)=>{
         },(err,sqlResponse,fields)=>{
             if(err)
             {
-                res.write(`<p class="error">SQL Fehler bei ${image.name}</p>\n`)
+                zeilen.push({klasse: "error",text: `SQL Fehler bei ${image.name}`})
             }
             else
             {
-                res.write(`<p>${image.name}</p>\n`)
+                zeilen.push({klasse: "",text: image.name})
             }
             processed++
             if(processed==images.length)
             {
-                res.write("</body></html>")
-                res.end()
+                res.render('bildRechnung',{zeilen: zeilen})
+                return
             }
         })
     })
@@ -193,8 +173,8 @@ app.get('/bild/:id',(req,res)=>{
 })
 
 app.get('/auszahlung',(req,res)=>{
-    res.write("<html><head><meta charset='UTF-8'><style></style></head><body><a href='/'><h1>TAS - Auszahlung</h1></a>")
     var processed = 0
+    const werte = {}
     leiter.forEach((leiter,index,array) => {
         pool.query({
             sql: "SELECT SUM(betrag) AS summe FROM rechnungen WHERE leiter = ? AND NOT bezahlt",
@@ -203,20 +183,18 @@ app.get('/auszahlung',(req,res)=>{
             if(err)
             {
                 console.error(err)
-                res.write("ERROR!")
-                res.end()
+                res.sendStatus(500)
                 return
             }
             else
             {  
                 const total = sqlResponse[0].summe ? sqlResponse[0].summe : 0
-                res.write(`<p><span>${leiter} ${formatToEuro(total)}€ </span><button onclick="confirm('${leiter} ${formatToEuro(total)}€ bezahlen?')?window.location.href='/bezahlen/${leiter}':null">Bezahlen</button></p>`)
+                werte[leiter] = formatToEuro(total)
             }
             processed++
             if(processed === array.length)
             {
-                res.write("</body></html>")
-                res.end()
+                res.render("auszahlung",{werte: werte})
             }
         })
     })
@@ -262,7 +240,7 @@ app.get('/entfernen/:id',(req,res)=>{
 
 app.get('/bericht/:kasse?',(req,res)=>{
     const admin = req.params.kasse == "admin"
-    const kassenSelector = !req.params.kasse ? "kasse = 'Lagerkosten' OR kasse = 'Transportkosten'" : admin ? "1=1" : "kasse = 'leiterkasse'"
+    const kassenSelector = !req.params.kasse ? "kasse = 'Lagerkosten' OR kasse = 'Transportkosten'" : admin ? "1=1" : "kasse = 'Leiterkasse'"
     pool.query({
         sql: `SELECT id,posten,betrag,kasse,bezahlt,leiter FROM rechnungen WHERE ${ kassenSelector } ORDER BY kasse,id;`
     },(err,sqlResponse,fields)=>{
@@ -273,27 +251,18 @@ app.get('/bericht/:kasse?',(req,res)=>{
         }
         else
         {
-            res.status(200)
-            const year = new Date().getFullYear()
-            res.write("<html><head><meta charset='UTF-8'><style>th,td {border-bottom: 1px solid black;} img{max-width:500px;max-height:500px;}</style></head><body><h1>Südtirol Abrechnung "+year+"</h1><div id='main'>")
-            var kasse = null
             var total = 0
+            const kassen = {
+                "Leiterkasse": [],
+                "Lagerkosten": [],
+                "Transportkosten": []
+            }
             sqlResponse.forEach(rechnung => {
-                if(kasse != rechnung.kasse)
-                {
-                    kasse = rechnung.kasse
-                    if(kasse)
-                        res.write("</table>")
-                    res.write(`<h2>${kasse}</h2>`)
-                    res.write("<table><tr><th>Betrag</th><th>Posten</th><th>Rechung</th></tr>")
-                }
-                res.write( `<tr><td>${formatToEuro(rechnung.betrag)}€</td><td>${rechnung.posten}</td><td><img src="/bild/${rechnung.id}" onerror="this.parentElement.innerHTML='- unbelegt -'"></td>${admin?`<td><span>${rechnung.leiter} ${rechnung.bezahlt ? "bezahlt":""}</span> <button onclick="confirm('Rechnung ${rechnung.posten} löschen?')?window.location.href='/entfernen/${rechnung.id}':null">Löschen</buttton></td>`:""}</tr>\n` )
                 total += rechnung.betrag
+                rechnung.betrag = formatToEuro(rechnung.betrag)
+                kassen[rechnung.kasse].push(rechnung)               
             })
-            res.write("</table>")
-            res.write(`<h3>Summe: ${formatToEuro(total)} €</h3>`)
-            res.write("</body></html>")
-            res.end()
+           res.render('bericht',{year: new Date().getFullYear(), kassen: kassen, summe: formatToEuro(total), admin: admin})
         }
     })
 })

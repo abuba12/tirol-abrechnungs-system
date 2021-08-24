@@ -1,0 +1,10 @@
+html
+    head 
+        meta(charset='UTF-8')
+        style p{background-color:lightgreen;} .error{color:black;background-color:red;}
+    body 
+        a(href='/')
+            h1 TAS - Bild Rechnung
+        a(href='/bildRechnung.html') Neue Bildrechnung 
+        each zeile in zeilen
+            p(class=`${zeile.klasse}`) #{zeile.text}

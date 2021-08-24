@@ -1,0 +1,12 @@
+html
+    head
+        meta(charset='UTF-8')
+    body
+        a(href='/')
+            h1 TAS - Auszahlung
+        each summe, name in werte
+            p
+                span #{name} #{summe}€ 
+                button(
+                    onClick=`confirm('${name} ${summe}€ bezahlen?')?window.location.href='/bezahlen/${name}':null`
+                    ) Bezahlen
