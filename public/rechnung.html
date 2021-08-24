@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rechnung hinzufügen</title>
+    <style>
+        form > * {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/"><h1>TAS - Rechnung hinzufügen</h1></a>
+    </header>
+    <main>
+        <form method="POST" action="/rechnung" enctype="multipart/form-data">
+            <input type="text" required placeholder="Posten" name="posten">
+            <br>
+            <input type="number" required placeholder="Betrag" name="betrag" min=0 step=0.01>
+            <br>
+            <select name="leiter" id="leiter" required>
+                <option disabled selected value>Leiter</option>
+            </select>
+            <br>
+            <label for="lagerkosten">Lagerkosten</label>
+            <input type="radio" value="Lagerkosten" name="kasse" id="lagerkosten" required>
+            <label for="transportkosten">Transportkosten</label>
+            <input type="radio" value="Transportkosten" name="kasse" id="transportkosten">
+            <label for="leiterkasse">Leiterkasse</label>
+            <input type="radio" value="Leiterkasse" name="kasse" id="leiterkasse">
+            <br>
+            <label for="bezahlt">Bezahlt</label>
+            <input type="checkbox" name="bezahlt" id="bezahlt">
+            <br>
+            <input type="file" name="bild" accept="image/*" on>
+            <br>
+            <button type="submit">Senden</button>
+        </form>
+    </main>
+<script>
+    const select = document.getElementById("leiter")
+    fetch("/leiter").then(res=>res.text()).then(data=>{
+        data.slice(0,-1).split(",").forEach(l=>{
+            select.innerHTML += `<option>${l}</option>`
+        })
+    })
+</script>
+</body>
+</html>

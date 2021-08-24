@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bild Rechnung hinzufügen</title>
+    <style>
+        form > * {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/"><h1>TAS - Bild Rechnung hinzufügen</h1></a>
+    </header>
+    <p>Format: leiter-posten-[le(iter)|la(ger)|t(ransport)]-€€_cc[-b(ezahlt)].jpg</p>
+    <form action="/bildRechnung" method="POST" enctype="multipart/form-data">
+        <input type="file" name="bild" accept="image/jpeg" oninput="onImagesSelected(this)" multiple>
+        <br>
+        <button type="submit">Senden</button>
+    </form>
+    <script>
+        const regex = "(?<leiter>[a-z]+)-(?<posten>[a-z]+)-(?<kasse>(le[a-z]*|la[a-z]*|t[a-z]*))-(?<euro>\\d+)_(?<cents>\\d{2})(?<bezahlt>(-b){1}[a-z]*)?"
+        const onImagesSelected = (sender) => {
+            console.log(sender.files)
+            Array.from(sender.files).forEach(file=>{
+                if(!file.name.split(".")[0].toLowerCase().match(regex))
+                {
+                    alert("Ungültiges Format: " + file.name)
+                }
+            })
+        }
+    </script>
+</body>
+</html>
