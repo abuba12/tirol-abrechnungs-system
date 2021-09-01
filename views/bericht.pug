@@ -1,33 +1,69 @@
-html
+html(lang="de")
     head 
         meta(charset='UTF-8')
-        style th,td {border-bottom: 1px solid black;} img{max-width:500px;max-height:500px;}
-    body
-        h1 Südtirol Abrechnung #{year}
-        #main 
+        meta(http-equiv="X-UA-Compatible" content="IE=edge")
+        meta(name="viewport" content="width=device-width, initial-scale=1.0")
+        style th,td {border-bottom: 1px solid black;} img{max-width:500px;max-height:500px;} .doppelt { background-color: yellow; }
+        title Abrechnung #{year}
+        link(href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet")
+        link(rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons")
+        if admin 
+            link(rel="stylesheet" href="/main.css")
+        style header > a {color: black; text-decoration: none;} img {margin: 5px 0;}
+        style @media print { tr { page-break-inside: avoid; } }
+    body.mdc-typography
+        if admin 
+            header.mdc-top-app-bar
+                .mdc-top-app-bar__row
+                    section(class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start")
+                        a(href="/")
+                            span(class="material-icons mdc-top-app-bar__action-item") arrow_back
+                        h1.mdc-top-app-bar__title Südtirol Abrechnung #{year} - Admin
+                        span(class="material-icons mdc-top-app-bar__action-item") receipt_long
+                        span(class="material-icons mdc-top-app-bar__action-item") build_circle
+        else 
+            header
+                a(href="/")
+                    h1 Südtirol Abrechnung #{year}
+        main 
             each rechnungen, kasse in kassen
                 if rechnungen.length
                     h2 #{kasse}
                     table
-                        tr
-                            th Betrag 
-                            th Posten 
-                            th Rechnung
-                        each rechnung in rechnungen
+                        thead
                             tr
-                                td #{rechnung.betrag}€
-                                td #{rechnung.posten}
-                                td 
-                                    img(
-                                        src=`/bild/${rechnung.id}`
-                                        onerror="this.parentElement.innerHTML='- unbelegt -'"
-                                        )
-                                if admin
-                                    td 
-                                        span #{rechnung.leiter} #{rechnung.bezahlt ? "bezahlt " : ""}
-                                        button(
-                                            onClick=`confirm('Rechnung ${rechnung.posten} löschen?')?window.location.href='/entfernen/${rechnung.id}':null"`
-                                        ) Löschen
+                                th Betrag 
+                                th Posten 
+                                th Rechnung
+                                if admin 
+                                    th Leiter 
+                                    th Bezahlt 
+                                    th Löschen
+                        tbody
+                            each rechnung in rechnungen
+                                tr(class=`${admin && rechnung.doppelt ? "doppelt" : ""}`)
+                                    td #{rechnung.betrag}€
+                                    td #{rechnung.posten}
+                                    td
+                                        if admin
+                                            img(
+                                                src="/image_black.svg"
+                                                onclick=`this.setAttribute('src','/bild/${rechnung.id}'); this.setAttribute('onerror','this.parentElement.innerHTML="- unbelegt -"')`
+                                            )
+                                        else
+                                            img(
+                                                src=`/bild/${rechnung.id}`
+                                                onerror="this.parentElement.innerHTML='- unbelegt -'"
+                                                )
+                                    if admin
+                                        td 
+                                            span #{rechnung.leiter}
+                                        td
+                                            span #{rechnung.bezahlt ? "bezahlt " : ""}
+                                        td
+                                            button(
+                                                onClick=`confirm('Rechnung ${rechnung.posten} löschen?')?window.location.href='/entfernen/${rechnung.id}':null`
+                                            ) Löschen
                          
 
             h3 Summe: #{summe} €

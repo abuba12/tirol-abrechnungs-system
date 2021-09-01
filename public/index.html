@@ -5,26 +5,88 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TAS</title>
+    <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+    <!-- <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script> -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="/main.css">
     <style>
-        a {
-            font-size: x-large;
+        main {
+            display: flex;
+            flex-direction: column;
+            margin: 0 3vw;
+        }
+
+        main > a > button {
+            width: 100%;
+        }
+
+        main > a {
+            text-decoration: none;
+            padding-bottom: 10px;
         }
     </style>
 </head>
-<body>
-    <h1>Tirol Abrechnungs System</h1>
-    <a href="/rechnung.html">Neue Rechnung</a>
-    <br>
-    <a href="/bildRechnung.html">Neue Bild Rechnung</a>
-    <br>
-    <a href="/auszahlung">Auszahlung</a>
-    <br>
-    <a href="/bericht">Bericht Lager+Transportkosten</a>
-    <br>
-    <a href="/bericht/leiter">Bericht Leiterkasse</a>
-    <br>
-    <a href="/bericht/admin">Bericht Admin</a>
-    <br>
-    <a href="/setup.html">Setup</a>
+<body class="mdc-typography">
+    <header class="mdc-top-app-bar">
+        <div class="mdc-top-app-bar__row">   
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+                <h1 class="mdc-top-app-bar__title">Tirol Abrechnungs System</h1>
+                <span class="material-icons mdc-top-app-bar__action-item">hiking</span>
+            </section>
+        </div>
+    </header>
+    <main>
+        <a href="/rechnung.html">
+            <button class="mdc-button mdc-button--unelevated mdc-button--icon-leading ">
+                <span class="mdc-button__ripple mdc-ripple-surface"></span>
+                <i class="material-icons mdc-button__icon" aria-hidden="true">receipt</i>
+                <span class="mdc-button__label">Neue Rechnung</span>
+            </button>
+        </a>
+        <a href="/bildRechnung.html">
+            <button class="mdc-button mdc-button--unelevated mdc-button--icon-leading ">
+                <span class="mdc-button__ripple mdc-ripple-surface"></span>
+                <i class="material-icons mdc-button__icon" aria-hidden="true">add_photo_alternate</i>
+                <span class="mdc-button__label">Neue Bild Rechnung</span>
+            </button>
+        </a>
+        <a href="/auszahlung">
+            <button class="mdc-button mdc-button--unelevated mdc-button--icon-leading ">
+                <span class="mdc-button__ripple mdc-ripple-surface"></span>
+                <i class="material-icons mdc-button__icon" aria-hidden="true">payment</i>
+                <span class="mdc-button__label">Auszahlung</span>
+            </button>
+        </a>
+        <a href="/bericht">
+            <button class="mdc-button mdc-button--unelevated mdc-button--icon-leading ">
+                <span class="mdc-button__ripple mdc-ripple-surface"></span>
+                <i class="material-icons mdc-button__icon" aria-hidden="true">receipt_long</i>
+                <span class="mdc-button__label">Bericht Lager+Transportkosten</span>
+            </button>
+        </a>
+        <a href="/bericht/leiter">
+            <button class="mdc-button mdc-button--unelevated mdc-button--icon-leading ">
+                <span class="mdc-button__ripple mdc-ripple-surface"></span>
+                <i class="material-icons mdc-button__icon" aria-hidden="true">receipt_long</i>
+                <i class="material-icons mdc-button__icon" aria-hidden="true">liquor</i>
+                <span class="mdc-button__label">Bericht Leiterkasse</span>
+            </button>
+        </a>
+        <a href="/bericht/admin">
+            <button class="mdc-button mdc-button--unelevated mdc-button--icon-leading ">
+                <span class="mdc-button__ripple mdc-ripple-surface"></span>
+                <i class="material-icons mdc-button__icon" aria-hidden="true">receipt_long</i>
+                <i class="material-icons mdc-button__icon" aria-hidden="true">build_circle</i>
+                <span class="mdc-button__label">Bericht Admin</span>
+            </button>
+        </a>
+        <a href="/setup.html">
+            <button class="mdc-button mdc-button--unelevated mdc-button--icon-leading ">
+                <span class="mdc-button__ripple mdc-ripple-surface"></span>
+                <i class="material-icons mdc-button__icon" aria-hidden="true">settings</i>
+                <span class="mdc-button__label">Setup</span>
+            </button>
+        </a>
+    </main>
 </body>
 </html>

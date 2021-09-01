@@ -5,14 +5,32 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Setup</title>
+    <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+    <!-- <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script> -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="main.css">
 </head>
-<body>
-    <a href="/"><h1>TAS - Setup</h1></a>
-    <form action="/setup" method="POST">
-        <textarea name="leiter" id="leiter" cols="30" rows="15"></textarea>
-        <br>
-        <button type="submit">Senden</button>
-    </form>
-<script>confirm("Achtung! Dieses Formular löscht alle vorhandenen Daten!") ? null : window.location.href="/" </script>
+<body class="mdc-typography">
+    <header class="mdc-top-app-bar">
+        <div class="mdc-top-app-bar__row">
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+                <a href="/">
+                    <span class="material-icons mdc-top-app-bar__action-item">arrow_back</span>
+                </a>
+                <h1 class="mdc-top-app-bar__title">Setup</h1>
+                <span class="material-icons mdc-top-app-bar__action-item">settings</span>
+            </section>
+        </div>
+    </header>
+    <main>
+        <form action="/setup" method="POST">
+            <textarea name="leiter" id="leiter" cols="30" rows="15" placeholder="Leiter"></textarea>
+            <br>
+            <button type="submit">Senden</button>
+        </form>
+    </main>
+    <script>
+        confirm("Achtung! Dieses Formular löscht alle vorhandenen Daten!") ? null : window.location.href="/"
+    </script>
 </body>
 </html>

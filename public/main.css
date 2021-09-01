@@ -1,0 +1,17 @@
+body {
+    margin: 0;
+}
+
+header > * >  a {
+    text-decoration: none;
+    color: white;
+}
+
+header > div > section > h1 {
+    margin-right: 5px;
+}
+
+main {
+    padding-top: 75px;
+    margin: 0 10px;
+}

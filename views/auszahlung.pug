@@ -1,12 +1,28 @@
 html
     head
         meta(charset='UTF-8')
-    body
-        a(href='/')
-            h1 TAS - Auszahlung
-        each summe, name in werte
-            p
-                span #{name} #{summe}€ 
-                button(
-                    onClick=`confirm('${name} ${summe}€ bezahlen?')?window.location.href='/bezahlen/${name}':null`
-                    ) Bezahlen
+        meta(http-equiv="X-UA-Compatible" content="IE=edge")
+        meta(name="viewport" content="width=device-width, initial-scale=1.0")
+        title Auszahlung 
+        link(href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet")
+        link(rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons")
+        link(rel="stylesheet" href="/main.css")
+    body.mdc-typography
+        header.mdc-top-app-bar
+            .mdc-top-app-bar__row
+                section(class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start")
+                    a(href="/")
+                        span(class="material-icons mdc-top-app-bar__action-item") arrow_back
+                    h1.mdc-top-app-bar__title Auszahlung 
+                    span(class="material-icons mdc-top-app-bar__action-item") payment
+        main
+            table
+                tbody
+                    each summe, name in werte
+                        tr
+                            td #{name}
+                            td #{summe} €
+                            td
+                                button(
+                                    onClick=`confirm('${name} ${summe}€ bezahlen?')?window.location.href='/bezahlen/${name}':null`
+                                    ) Bezahlen

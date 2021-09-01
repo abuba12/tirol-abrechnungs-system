@@ -1,10 +1,25 @@
 html
     head 
         meta(charset='UTF-8')
+        meta(http-equiv="X-UA-Compatible" content="IE=edge")
+        meta(name="viewport" content="width=device-width, initial-scale=1.0")
+        title Bild Rechnung 
+        link(href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet")
+        link(rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons")
+        link(rel="stylesheet" href="main.css")
         style p{background-color:lightgreen;} .error{color:black;background-color:red;}
-    body 
-        a(href='/')
-            h1 TAS - Bild Rechnung
-        a(href='/bildRechnung.html') Neue Bildrechnung 
-        each zeile in zeilen
-            p(class=`${zeile.klasse}`) #{zeile.text}
+    body.mdc-typography
+        header.mdc-top-app-bar
+            .mdc-top-app-bar__row
+                section(class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start")
+                    a(href="/")
+                        span(class="material-icons mdc-top-app-bar__action-item") arrow_back
+                    h1.mdc-top-app-bar__title Bild Rechnung 
+                    span(class="material-icons mdc-top-app-bar__action-item") add_photo_alternate
+                section(class="mdc-top-app-bar__section mdc-top-app-bar__section" role="toolbar")
+                    a(href='/bildRechnung.html')
+                        abbr(title="Neue Bild Rechnung")
+                            span(class="material-icons mdc-top-app-bar__action-item") add_to_photos
+        main
+            each zeile in zeilen
+                p(class=`${zeile.klasse}`) #{zeile.text}

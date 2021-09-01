@@ -5,33 +5,47 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bild Rechnung hinzufügen</title>
+    <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+    <!-- <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script> -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="main.css">
     <style>
         form > * {
             margin-bottom: 15px;
         }
     </style>
 </head>
-<body>
-    <header>
-        <a href="/"><h1>TAS - Bild Rechnung hinzufügen</h1></a>
+<body class="mdc-typography">
+    <header class="mdc-top-app-bar">
+        <div class="mdc-top-app-bar__row">
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+                <a href="/">
+                    <span class="material-icons mdc-top-app-bar__action-item">arrow_back</span>
+                </a>
+                <h1 class="mdc-top-app-bar__title">Bild Rechnung hinzufügen</h1>
+                <span class="material-icons mdc-top-app-bar__action-item">add_photo_alternate</span>
+            </section>
+        </div>
     </header>
-    <p>Format: leiter-posten-[le(iter)|la(ger)|t(ransport)]-€€_cc[-b(ezahlt)].jpg</p>
-    <form action="/bildRechnung" method="POST" enctype="multipart/form-data">
-        <input type="file" name="bild" accept="image/jpeg" oninput="onImagesSelected(this)" multiple>
-        <br>
-        <button type="submit">Senden</button>
+    <main>
+        <p>Format: leiter-posten-[le(iter)|la(ger)|t(ransport)]-€€_cc[-b(ezahlt)].jpg</p>
+        <form action="/bildRechnung" method="POST" enctype="multipart/form-data">
+            <input type="file" name="bild" accept="image/jpeg" oninput="onImagesSelected(this)" multiple>
+            <br>
+            <button type="submit">Senden</button>
     </form>
-    <script>
-        const regex = "(?<leiter>[a-z]+)-(?<posten>[a-z]+)-(?<kasse>(le[a-z]*|la[a-z]*|t[a-z]*))-(?<euro>\\d+)_(?<cents>\\d{2})(?<bezahlt>(-b){1}[a-z]*)?"
-        const onImagesSelected = (sender) => {
-            console.log(sender.files)
-            Array.from(sender.files).forEach(file=>{
-                if(!file.name.split(".")[0].toLowerCase().match(regex))
-                {
-                    alert("Ungültiges Format: " + file.name)
-                }
-            })
-        }
-    </script>
+    </main>
+<script>
+    const regex = "(?<leiter>[a-z]+)-(?<posten>[a-z]+)-(?<kasse>(le[a-z]*|la[a-z]*|t[a-z]*))-(?<euro>\\d+)_(?<cents>\\d{2})(?<bezahlt>(-b){1}[a-z]*)?"
+    const onImagesSelected = (sender) => {
+        console.log(sender.files)
+        Array.from(sender.files).forEach(file=>{
+            if(!file.name.split(".")[0].toLowerCase().match(regex))
+            {
+                alert("Ungültiges Format: " + file.name)
+            }
+        })
+    }
+</script>
 </body>
 </html>
