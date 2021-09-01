@@ -40,6 +40,10 @@ const formatToCents = (euro) => {
     return euro * 100
 }
 
+const rechnungGleich = (r1, r2) => {
+    return r1.betrag === r2.betrag && r1.posten === r2.posten && r1.leiter === r2.leiter && r1.kasse === r2.kasse 
+}
+
 var leiter
 
 const leiterAbrufen = () => {
@@ -260,7 +264,13 @@ app.get('/bericht/:kasse?',(req,res)=>{
             sqlResponse.forEach(rechnung => {
                 total += rechnung.betrag
                 rechnung.betrag = formatToEuro(rechnung.betrag)
-                kassen[rechnung.kasse].push(rechnung)               
+                kassen[rechnung.kasse].forEach(r2 => {
+                    if(rechnungGleich(rechnung,r2))
+                    {
+                        rechnung.doppelt = true
+                    }
+                })
+                kassen[rechnung.kasse].push(rechnung)            
             })
            res.render('bericht',{year: new Date().getFullYear(), kassen: kassen, summe: formatToEuro(total), admin: admin})
         }
