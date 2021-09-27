@@ -23,9 +23,9 @@ app.use(require('express-fileupload')())
 app.set('views', './views')
 app.set('view engine', 'pug');
 
-const pool = require('mysql').createPool({
+const pool = require('mysql2').createPool({
     connectionLimit: 5,
-    socketPath: process.env.DB_SOCK_PATH,
+    host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
     database: process.env.DB_DATABASE
@@ -301,6 +301,7 @@ app.post('/setup',(req,res)=>{
         else
         {
             var leiterString = ""
+            var i
             for(i = 0; i < req.body.leiter.length; i++)
             {
                 leiterString += "?"
