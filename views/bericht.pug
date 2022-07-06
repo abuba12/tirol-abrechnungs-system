@@ -7,10 +7,9 @@ html(lang="de")
         title Abrechnung #{year}
         link(href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet")
         link(rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons")
+        link(rel="stylesheet" href="/bericht.css")
         if admin 
             link(rel="stylesheet" href="/main.css")
-        style header > a {color: black; text-decoration: none;} img {margin: 5px 0;}
-        style @media print { tr { page-break-inside: avoid; } }
     body.mdc-typography
         if admin 
             header.mdc-top-app-bar
@@ -28,12 +27,12 @@ html(lang="de")
         main 
             each rechnungen, kasse in kassen
                 if rechnungen.length
-                    h2 #{kasse}
+                    h2 #{kasse} - #{kosten[kasse]}€
                     table
                         thead
                             tr
                                 th Betrag 
-                                th Posten 
+                                th Posten
                                 th Rechnung
                                 if admin 
                                     th Leiter 
@@ -45,16 +44,19 @@ html(lang="de")
                                     td #{rechnung.betrag}€
                                     td #{rechnung.posten}
                                     td
-                                        if admin
-                                            img(
-                                                src="/image_black.svg"
-                                                onclick=`this.setAttribute('src','/bild/${rechnung.id}'); this.setAttribute('onerror','this.parentElement.innerHTML="- unbelegt -"')`
-                                            )
-                                        else
-                                            img(
-                                                src=`/bild/${rechnung.id}`
-                                                onerror="this.parentElement.innerHTML='- unbelegt -'"
+                                        if !print
+                                            if admin
+                                                img(
+                                                    src="/image_black.svg"
+                                                    onclick=`this.setAttribute('src','/bild/${rechnung.id}'); this.setAttribute('onerror','this.parentElement.innerHTML="- unbelegt -"')`
                                                 )
+                                            else
+                                                img(
+                                                    src=`/bild/${rechnung.id}`
+                                                    onerror="this.parentElement.innerHTML='- unbelegt -'"
+                                                    )
+                                        else
+                                            span s.h. Anlage
                                     if admin
                                         td 
                                             span #{rechnung.leiter}

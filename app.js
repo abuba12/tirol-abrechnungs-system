@@ -245,6 +245,8 @@ app.get('/entfernen/:id',(req,res)=>{
 app.get('/bericht/:kasse?',(req,res)=>{
     const admin = req.params.kasse == "admin"
     const kassenSelector = !req.params.kasse ? "kasse = 'Lagerkosten' OR kasse = 'Transportkosten'" : admin ? "1=1" : "kasse = 'Leiterkasse'"
+    const print = req.query.print !== undefined
+    req.query.print
     pool.query({
         sql: `SELECT id,posten,betrag,kasse,bezahlt,leiter FROM rechnungen WHERE ${ kassenSelector } ORDER BY kasse,id;`
     },(err,sqlResponse,fields)=>{
@@ -261,8 +263,14 @@ app.get('/bericht/:kasse?',(req,res)=>{
                 "Lagerkosten": [],
                 "Transportkosten": []
             }
+            var kosten = {
+                "Leiterkasse": 0,
+                "Lagerkosten": 0,
+                "Transportkosten": 0
+            }
             sqlResponse.forEach(rechnung => {
                 total += rechnung.betrag
+                kosten[rechnung.kasse] += rechnung.betrag
                 rechnung.betrag = formatToEuro(rechnung.betrag)
                 kassen[rechnung.kasse].forEach(r2 => {
                     if(rechnungGleich(rechnung,r2))
@@ -272,7 +280,10 @@ app.get('/bericht/:kasse?',(req,res)=>{
                 })
                 kassen[rechnung.kasse].push(rechnung)            
             })
-           res.render('bericht',{year: new Date().getFullYear(), kassen: kassen, summe: formatToEuro(total), admin: admin})
+            kosten["Leiterkasse"] = formatToEuro(kosten["Leiterkasse"])
+            kosten["Lagerkosten"] = formatToEuro(kosten["Lagerkosten"])
+            kosten["Transportkosten"] = formatToEuro(kosten["Transportkosten"])
+           res.render('bericht',{year: new Date().getFullYear(), kassen: kassen, kosten: kosten, print: print, summe: formatToEuro(total), admin: admin})
         }
     })
 })
