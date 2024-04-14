@@ -9,6 +9,7 @@
   "keywords": [
     "Tirol"
   ],
+  "repository": "github:abuba12/tirol-abrechnungs-system",
   "author": "Julian Schnitzler",
   "license": "ISC",
   "dependencies": {
