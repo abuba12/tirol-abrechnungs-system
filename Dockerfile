@@ -13,4 +13,4 @@ COPY . .
 ENV PORT=5000
 ENV NODE_ENV=production
 
-CMD ["pm2-runtime","app.js"]
+CMD ["pm2","start","ecosystem.config.js"]
